@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>玩家互動</title>
+    <style>
+        body {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            background-color: #e0f7fa; /* 淺藍色背景 */
+            font-family: 'Arial', sans-serif;
+            color: #00695c; /* 深綠色文字 */
+            padding: 10px; /* 添加一些內邊距 */
+            box-sizing: border-box; /* 確保內邊距計算在寬度內 */
+        }
+        input, button {
+            margin: 10px;
+            padding: 10px 20px;
+            font-size: 18px;
+            border: none;
+            border-radius: 5px;
+            transition: background-color 0.3s, transform 0.3s; /* 添加轉換效果 */
+            width: 100%; /* 按鈕和輸入框全寬 */
+            max-width: 300px; /* 最大寬度限制 */
+        }
+        input {
+            border: 2px solid #00695c;
+        }
+        button {
+            background-color: #004d40; /* Yes 按鈕顏色 */
+            color: white;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #00796b; /* Yes 按鈕懸停效果 */
+        }
+        #noButton {
+            background-color: red; /* No 按鈕紅色 */
+        }
+        #question {
+            margin: 20px;
+            font-size: 24px;
+            font-weight: bold; /* 粗體字 */
+            text-align: center; /* 中心對齊 */
+        }
+        #count {
+            font-size: 20px;
+            margin-top: 15px;
+        }
+        #message {
+            font-size: 26px; /* 更大的字體 */
+            color: #00bfae; /* 更綠的字體 */
+            display: none; /* 初始隱藏 */
+        }
+        #finalMessage {
+            font-size: 22px;
+            color: #004d40; /* 最終訊息的顏色 */
+            display: none; /* 初始隱藏 */
+            text-align: center; /* 中心對齊 */
+        }
+        #errorMessage {
+            font-size: 30px; /* 巨大的字體 */
+            color: red; /* 紅色字體 */
+            display: none; /* 初始隱藏 */
+        }
+        .rainbow {
+            font-size: 22px;
+            display: inline-block;
+            animation: rainbow 2s infinite; /* RGB 漸變特效 */
+        }
+        @keyframes rainbow {
+            0% { color: red; }
+            16% { color: orange; }
+            33% { color: yellow; }
+            50% { color: green; }
+            66% { color: blue; }
+            83% { color: indigo; }
+            100% { color: violet; }
+        }
+
+        /* 媒體查詢 */
+        @media (max-width: 600px) {
+            body {
+                font-size: 16px; /* 調整字體大小 */
+            }
+            input, button {
+                padding: 8px 16px; /* 調整內邊距 */
+                font-size: 16px; /* 調整字體大小 */
+            }
+            #question {
+                font-size: 20px; /* 調整問題字體大小 */
+            }
+            #message, #finalMessage {
+                font-size: 20px; /* 調整訊息字體大小 */
+            }
+            #errorMessage {
+                font-size: 24px; /* 調整錯誤消息字體大小 */
+            }
+        }
+
+        @media (min-width: 601px) and (max-width: 900px) {
+            body {
+                font-size: 18px; /* 調整字體大小 */
+            }
+            input, button {
+                padding: 10px 20px; /* 調整內邊距 */
+                font-size: 18px; /* 調整字體大小 */
+            }
+            #question {
+                font-size: 22px; /* 調整問題字體大小 */
+            }
+            #message, #finalMessage {
+                font-size: 22px; /* 調整訊息字體大小 */
+            }
+            #errorMessage {
+                font-size: 28px; /* 調整錯誤消息字體大小 */
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <input type="text" id="nameInput" placeholder="請輸入你的名字" />
+    <button id="confirmButton">確定</button>
+    <div id="errorMessage"></div> <!-- 錯誤消息 -->
+    
+    <div id="question"></div>
+    <button id="yesButton" style="display:none;">Yes</button>
+    <button id="noButton" style="display:none;">No</button>
+    <div id="message"></div>
+    <div id="count" style="display:none;"></div>
+    <div id="finalMessage"></div>
+
+    <script>
+        let yesCount = 0; // 儲存全局參加人數
+        let noCount = 0; // 儲存 No 按鈕被按下的次數
+
+        document.getElementById('confirmButton').onclick = function() {
+            const playerName = document.getElementById('nameInput').value.toLowerCase(); // 將輸入轉為小寫
+            const errorMessage = document.getElementById('errorMessage');
+            if (playerName.includes("isvxs")) { // 檢查小寫的 "isvxs"
+                errorMessage.textContent = "名字不可用"; // 顯示錯誤信息
+                errorMessage.style.display = 'block'; // 顯示錯誤信息
+                return; // 結束函數，不繼續
+            } else {
+                errorMessage.style.display = 'none'; // 隱藏錯誤信息
+            }
+
+            if (playerName) {
+                document.getElementById('question').textContent = `${playerName} 是小孩嗎？`;
+                document.getElementById('yesButton').style.display = 'inline-block';
+                document.getElementById('noButton').style.display = 'inline-block';
+                document.getElementById('confirmButton').style.display = 'none';
+                document.getElementById('nameInput').style.display = 'none';
+            }
+        };
+
+        document.getElementById('yesButton').onclick = function() {
+            yesCount++; // 每次按下 Yes，計數器加一
+            document.getElementById('message').textContent = '恭喜你證明你是小孩了!!!';
+            document.getElementById('message').style.display = 'block';
+            document.getElementById('yesButton').style.display = 'none';
+            document.getElementById('noButton').style.display = 'none';
+
+            // 顯示最終訊息
+            document.getElementById('finalMessage').innerHTML = '滾吧, 沒東西了. <span class="rainbow">製作by: Isvxs</span>';
+            document.getElementById('finalMessage').style.display = 'block';
+        };
+
+        document.getElementById('noButton').onclick = function() {
+            noCount++; // 每次按下 No，計數器加一
+            // 縮小 No 按鈕及字體
+            const currentSize = parseFloat(window.getComputedStyle(this).fontSize);
+            const newSize = currentSize * 0.9; // 縮小10%
+
+            this.style.fontSize = newSize + 'px'; // 縮小字體
+            this.style.width = (this.offsetWidth * 0.9) + 'px'; // 縮小按鈕寬度
+
+            if (noCount >= 10) { // 如果按下次數達到10次，則隱藏按鈕
+                this.style.display = 'none';
+            } else {
+                const randomX = Math.random() * (window.innerWidth - 100);
+                const randomY = Math.random() * (window.innerHeight - 50);
+                this.style.position = 'absolute';
+                this.style.left = randomX + 'px';
+                this.style.top = randomY + 'px';
+            }
+        };
+
+        // 禁用右鍵和 F12 鍵
+        document.addEventListener('contextmenu', function(event) {
+            event.preventDefault(); // 禁用右鍵菜單
+        });
+
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'F12') {
+                event.preventDefault(); // 禁用 F12 鍵
+            }
+        });
+    </script>
+</body>
+</html>
